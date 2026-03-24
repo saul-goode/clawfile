@@ -1,0 +1,24 @@
+{
+  "name": "clawfile",
+  "version": "0.1.0",
+  "description": "Brewfile-style skill sync for ClawHub/OpenClaw",
+  "type": "module",
+  "bin": {
+    "clawfile": "bin/clawfile.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "lint": "node --check bin/clawfile.js",
+    "start": "node bin/clawfile.js --help"
+  },
+  "keywords": [
+    "openclaw",
+    "clawhub",
+    "skills",
+    "cli"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  }
+}
