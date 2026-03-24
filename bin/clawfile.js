@@ -102,6 +102,22 @@ function installedVersions(env) {
   return map;
 }
 
+function latestVersionForSlug(slug, env, cache) {
+  if (cache.has(slug)) return cache.get(slug);
+
+  const out = spawnSync('clawhub', ['inspect', slug], { encoding: 'utf8', env: { ...process.env, ...env } });
+  if (out.status !== 0) {
+    cache.set(slug, '');
+    return '';
+  }
+
+  const txt = `${out.stdout || ''}\n${out.stderr || ''}`;
+  const m = txt.match(/^Latest:\s*([^\s]+)/m);
+  const latest = m?.[1] || '';
+  cache.set(slug, latest);
+  return latest;
+}
+
 async function ensureClawhubInstalled() {
   const check = spawnSync('clawhub', ['--cli-version'], { stdio: 'ignore' });
   if (check.status === 0) return;
@@ -156,6 +172,7 @@ async function main() {
   if (parsed.directives.workdir) env.CLAWHUB_WORKDIR = normalizeWorkdir(parsed.directives.workdir);
 
   const installed = installedVersions(env);
+  const latestCache = new Map();
 
   let failed = 0;
   let skipped = 0;
@@ -170,6 +187,16 @@ async function main() {
       console.log(`Skipping ${s.slug}@${targetVersion} (already installed)`);
       skipped++;
       continue;
+    }
+
+    // Smart update skip: if installed == latest and no explicit target version, skip update.
+    if (cfg.mode === 'update' && !targetVersion && installedVersion) {
+      const latest = latestVersionForSlug(s.slug, env, latestCache);
+      if (latest && installedVersion === latest) {
+        console.log(`Skipping ${s.slug}@${installedVersion} (already latest)`);
+        skipped++;
+        continue;
+      }
     }
 
     const args = [cfg.mode, s.slug];

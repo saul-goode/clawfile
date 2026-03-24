@@ -61,6 +61,8 @@ clawfile install Clawfile
 clawfile update Clawfile
 ```
 
+`update` mode is smart: it compares local installed version (`clawhub list`) with remote `Latest` (`clawhub inspect <slug>`) and skips skills already on latest when no explicit version is pinned.
+
 ## Flags
 
 - `--lock <path>`: lockfile path (default: `Clawfile.lock`)
