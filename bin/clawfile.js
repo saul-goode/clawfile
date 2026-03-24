@@ -11,7 +11,7 @@ function usage() {
   console.log(`clawfile v0.1.0
 
 Usage:
-  clawfile sync [file] [--mode install|update] [--lock <file>] [--dry-run] [--strict] [--continue-on-error] [--refresh-lock]
+  clawfile sync [file] [--mode install|update] [--lock <file>] [--dry-run] [--strict] [--continue-on-error] [--refresh-lock] [--force]
   clawfile install [file] [flags...]
   clawfile update [file] [flags...]
 
@@ -34,6 +34,7 @@ function parseArgs(argv) {
   let strict = false;
   let continueOnError = false;
   let refreshLock = false;
+  let force = false;
 
   while (args.length) {
     const a = args.shift();
@@ -44,6 +45,7 @@ function parseArgs(argv) {
     else if (a === '--strict') strict = true;
     else if (a === '--continue-on-error') continueOnError = true;
     else if (a === '--refresh-lock') refreshLock = true;
+    else if (a === '--force') force = true;
     else if (!a.startsWith('-') && file === 'Clawfile') file = a;
     else throw new Error(`Unknown arg: ${a}`);
   }
@@ -52,7 +54,7 @@ function parseArgs(argv) {
   if (cmd === 'update') mode = 'update';
   if (cmd !== 'sync' && cmd !== 'install' && cmd !== 'update') throw new Error(`Unknown command: ${cmd}`);
 
-  return { cmd, file, mode, lock: lock || `${file}.lock`, dryRun, strict, continueOnError, refreshLock };
+  return { cmd, file, mode, lock: lock || `${file}.lock`, dryRun, strict, continueOnError, refreshLock, force };
 }
 
 function expandHomePath(p) {
@@ -172,8 +174,9 @@ async function main() {
 
     const args = [cfg.mode, s.slug];
     if (targetVersion) args.push('--version', targetVersion);
+    if (cfg.force) args.push('--force');
 
-    if (cfg.mode === 'install') {
+    if (cfg.mode === 'install' && !cfg.force) {
       const skillPath = join(resolveSkillsDir(env), s.slug);
       if (existsSync(skillPath)) {
         console.log(`Skipping ${s.slug} (already present at ${skillPath})`);

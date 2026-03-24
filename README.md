@@ -68,6 +68,7 @@ clawfile update Clawfile
 - `--strict`: stop on first failure
 - `--continue-on-error`: continue and report failures at end
 - `--refresh-lock`: ignore existing lock pins during install
+- `--force`: pass through force reinstall/update to clawhub (`--force`)
 
 ## Notes
 
