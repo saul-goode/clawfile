@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
+import { homedir } from 'node:os';
 import { parseFile, loadLock, writeLock } from '../lib/core.js';
 
 function usage() {
@@ -51,6 +52,13 @@ function parseArgs(argv) {
   return { cmd, file, mode, lock: lock || `${file}.lock`, dryRun, strict, continueOnError, refreshLock };
 }
 
+function expandHomePath(p) {
+  if (!p) return p;
+  if (p === '~') return homedir();
+  if (p.startsWith('~/')) return `${homedir()}/${p.slice(2)}`;
+  return p;
+}
+
 function runClawhub(args, env, dryRun) {
   const cmd = `clawhub ${args.join(' ')}`;
   if (dryRun) {
@@ -81,7 +89,7 @@ function main() {
   const lock = loadLock(cfg.lock);
   const env = {};
   if (parsed.directives.registry) env.CLAWHUB_REGISTRY = parsed.directives.registry;
-  if (parsed.directives.workdir) env.CLAWHUB_WORKDIR = parsed.directives.workdir;
+  if (parsed.directives.workdir) env.CLAWHUB_WORKDIR = expandHomePath(parsed.directives.workdir);
 
   const installed = installedVersions(env);
 
