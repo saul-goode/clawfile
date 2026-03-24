@@ -1,7 +1,8 @@
-registry https://clawhub.com
-workdir /Users/<you>/.openclaw/workspace
+registry https://clawhub.ai
+workdir ~/.openclaw/workspace
 
 weather
 apple-reminders
 github
 telegram@1.0.0
+https://clawhub.ai/ivangdavila/self-improving

@@ -1,12 +1,49 @@
 # clawfile
 
-Brewfile-style skill management for OpenClaw/ClawHub.
+[![npm version](https://img.shields.io/npm/v/clawfile.svg)](https://www.npmjs.com/package/clawfile)
+[![CI](https://github.com/saul-goode/clawfile/actions/workflows/ci.yml/badge.svg)](https://github.com/saul-goode/clawfile/actions/workflows/ci.yml)
 
-## Prerequisite
+Brewfile-style skill management for OpenClaw + ClawHub.
 
-`clawfile` shells out to the ClawHub CLI, so `clawhub` must be installed.
+## Install
 
-If missing, `clawfile` will prompt to install it automatically:
+```bash
+npm i -g clawfile
+```
+
+## Getting started in 60 seconds
+
+1. Create a `Clawfile`:
+
+```txt
+registry https://clawhub.ai
+workdir ~/.openclaw/workspace
+
+weather
+apple-reminders
+github
+https://clawhub.ai/ivangdavila/self-improving
+```
+
+2. Preview actions:
+
+```bash
+clawfile install Clawfile --dry-run
+```
+
+3. Apply:
+
+```bash
+clawfile install Clawfile
+```
+
+That’s it. `Clawfile.lock` is written automatically after non-dry runs.
+
+## Prerequisite (`clawhub`)
+
+`clawfile` shells out to the ClawHub CLI.
+
+If `clawhub` is missing, `clawfile` prompts to install:
 
 ```txt
 `clawhub` is missing. Install now with `npm i -g clawhub`? [Y/n]
@@ -18,40 +55,28 @@ Manual install:
 npm i -g clawhub
 ```
 
-Skill install primitives used under the hood:
+Under the hood:
 
 ```bash
 clawhub install <skill-slug>
 clawhub install <skill-slug> --version <version>
 ```
 
-## Install (local dev)
-
-```bash
-npm i
-npm link
-```
-
-Then use:
-
-```bash
-clawfile --help
-```
-
 ## Clawfile format
 
 ```txt
-registry https://clawhub.com
-workdir /Users/<you>/.openclaw/workspace
+registry https://clawhub.ai
+workdir ~/.openclaw/workspace
 
 weather
-apple-reminders
-github
 telegram@1.0.0
+ivangdavila/self-improving
+https://clawhub.ai/ivangdavila/self-improving
 ```
 
 - `skill` => latest
 - `skill@x.y.z` => pinned version
+- `owner/skill` and full ClawHub URLs are supported
 
 ## Commands
 
@@ -61,7 +86,10 @@ clawfile install Clawfile
 clawfile update Clawfile
 ```
 
-`update` mode is smart: it compares local installed version (`clawhub list`) with remote `Latest` (`clawhub inspect <slug>`) and skips skills already on latest when no explicit version is pinned.
+`update` mode is smart:
+- local installed version from `clawhub list`
+- remote latest version from `clawhub inspect <slug>`
+- skills already on latest are skipped automatically
 
 ## Flags
 
@@ -74,6 +102,6 @@ clawfile update Clawfile
 
 ## Notes
 
-- Requires `clawhub` CLI on PATH.
-- `workdir` supports `~` only at the start (e.g. `~/.openclaw/workspace`) and will fail fast on unresolved `~` segments to avoid accidental nested install paths.
-- Writes lockfile after non-dry runs.
+- `workdir` supports `~` only at the start (e.g. `~/.openclaw/workspace`)
+- unresolved `~` segments fail fast to prevent accidental nested installs
+- lockfile is written after non-dry runs
