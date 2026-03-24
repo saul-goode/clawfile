@@ -1,0 +1,19 @@
+name: Feature request
+description: Suggest an enhancement for clawfile
+title: "feat: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What pain point are you hitting?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What should clawfile do?
+    validations:
+      required: true
