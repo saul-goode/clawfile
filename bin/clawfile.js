@@ -79,9 +79,19 @@ function installedVersions(env) {
   return map;
 }
 
+function ensureClawhubInstalled() {
+  const check = spawnSync('clawhub', ['--version'], { stdio: 'ignore' });
+  if (check.status === 0) return;
+  console.error('clawfile requires the `clawhub` CLI.');
+  console.error('Install it with: npm i -g clawhub');
+  process.exit(1);
+}
+
 function main() {
   const cfg = parseArgs(process.argv.slice(2));
   if (cfg.help) return usage();
+
+  ensureClawhubInstalled();
 
   if (!existsSync(cfg.file)) throw new Error(`Missing file: ${cfg.file}`);
 

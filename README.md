@@ -2,6 +2,21 @@
 
 Brewfile-style skill management for OpenClaw/ClawHub.
 
+## Prerequisite
+
+`clawfile` shells out to the ClawHub CLI, so `clawhub` must be installed:
+
+```bash
+npm i -g clawhub
+```
+
+Skill install primitives used under the hood:
+
+```bash
+clawhub install <skill-slug>
+clawhub install <skill-slug> --version <version>
+```
+
 ## Install (local dev)
 
 ```bash
