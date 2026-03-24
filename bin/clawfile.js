@@ -2,6 +2,8 @@
 import { existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { homedir } from 'node:os';
+import { createInterface } from 'node:readline/promises';
+import { stdin as input, stdout as output } from 'node:process';
 import { parseFile, loadLock, writeLock } from '../lib/core.js';
 
 function usage() {
@@ -79,19 +81,50 @@ function installedVersions(env) {
   return map;
 }
 
-function ensureClawhubInstalled() {
+async function ensureClawhubInstalled() {
   const check = spawnSync('clawhub', ['--version'], { stdio: 'ignore' });
   if (check.status === 0) return;
+
+  const ci = process.env.CI === 'true' || process.env.NONINTERACTIVE === '1';
   console.error('clawfile requires the `clawhub` CLI.');
-  console.error('Install it with: npm i -g clawhub');
-  process.exit(1);
+
+  if (ci || !process.stdin.isTTY) {
+    console.error('Install it with: npm i -g clawhub');
+    process.exit(1);
+  }
+
+  const rl = createInterface({ input, output });
+  try {
+    const ans = (await rl.question('`clawhub` is missing. Install now with `npm i -g clawhub`? [Y/n] ')).trim().toLowerCase();
+    const yes = ans === '' || ans === 'y' || ans === 'yes';
+    if (!yes) {
+      console.error('Okay — install manually with: npm i -g clawhub');
+      process.exit(1);
+    }
+
+    const install = spawnSync('npm', ['i', '-g', 'clawhub'], { stdio: 'inherit' });
+    if (install.status !== 0) {
+      console.error('Automatic install failed. Please run: npm i -g clawhub');
+      process.exit(1);
+    }
+
+    const verify = spawnSync('clawhub', ['--version'], { stdio: 'ignore' });
+    if (verify.status !== 0) {
+      console.error('Install completed but `clawhub` is still not on PATH. Restart shell and retry.');
+      process.exit(1);
+    }
+
+    console.log('✅ clawhub installed successfully.');
+  } finally {
+    rl.close();
+  }
 }
 
-function main() {
+async function main() {
   const cfg = parseArgs(process.argv.slice(2));
   if (cfg.help) return usage();
 
-  ensureClawhubInstalled();
+  await ensureClawhubInstalled();
 
   if (!existsSync(cfg.file)) throw new Error(`Missing file: ${cfg.file}`);
 
@@ -142,10 +175,8 @@ function main() {
   if (failed > 0) process.exit(2);
 }
 
-try {
-  main();
-} catch (err) {
+main().catch((err) => {
   console.error(err.message || err);
   usage();
   process.exit(1);
-}
+});

@@ -4,7 +4,15 @@ Brewfile-style skill management for OpenClaw/ClawHub.
 
 ## Prerequisite
 
-`clawfile` shells out to the ClawHub CLI, so `clawhub` must be installed:
+`clawfile` shells out to the ClawHub CLI, so `clawhub` must be installed.
+
+If missing, `clawfile` will prompt to install it automatically:
+
+```txt
+`clawhub` is missing. Install now with `npm i -g clawhub`? [Y/n]
+```
+
+Manual install:
 
 ```bash
 npm i -g clawhub
