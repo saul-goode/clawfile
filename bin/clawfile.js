@@ -61,6 +61,19 @@ function expandHomePath(p) {
   return p;
 }
 
+function normalizeWorkdir(raw) {
+  const expanded = expandHomePath(raw);
+
+  // Guard against unresolved tilde segments that would create literal "~" dirs.
+  if (expanded.includes('/~/') || expanded.endsWith('/~') || expanded.startsWith('~')) {
+    throw new Error(
+      `Invalid workdir path: ${raw}. Tilde (~) must be at the beginning (e.g. ~/.openclaw/workspace) or use an absolute path.`
+    );
+  }
+
+  return expanded;
+}
+
 function runClawhub(args, env, dryRun) {
   const cmd = `clawhub ${args.join(' ')}`;
   if (dryRun) {
@@ -132,7 +145,7 @@ async function main() {
   const lock = loadLock(cfg.lock);
   const env = {};
   if (parsed.directives.registry) env.CLAWHUB_REGISTRY = parsed.directives.registry;
-  if (parsed.directives.workdir) env.CLAWHUB_WORKDIR = expandHomePath(parsed.directives.workdir);
+  if (parsed.directives.workdir) env.CLAWHUB_WORKDIR = normalizeWorkdir(parsed.directives.workdir);
 
   const installed = installedVersions(env);
 

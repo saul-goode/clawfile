@@ -72,4 +72,5 @@ clawfile update Clawfile
 ## Notes
 
 - Requires `clawhub` CLI on PATH.
+- `workdir` supports `~` only at the start (e.g. `~/.openclaw/workspace`) and will fail fast on unresolved `~` segments to avoid accidental nested install paths.
 - Writes lockfile after non-dry runs.
