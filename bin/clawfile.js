@@ -95,7 +95,7 @@ function installedVersions(env) {
 }
 
 async function ensureClawhubInstalled() {
-  const check = spawnSync('clawhub', ['--version'], { stdio: 'ignore' });
+  const check = spawnSync('clawhub', ['--cli-version'], { stdio: 'ignore' });
   if (check.status === 0) return;
 
   const ci = process.env.CI === 'true' || process.env.NONINTERACTIVE === '1';
@@ -121,7 +121,7 @@ async function ensureClawhubInstalled() {
       process.exit(1);
     }
 
-    const verify = spawnSync('clawhub', ['--version'], { stdio: 'ignore' });
+    const verify = spawnSync('clawhub', ['--cli-version'], { stdio: 'ignore' });
     if (verify.status !== 0) {
       console.error('Install completed but `clawhub` is still not on PATH. Restart shell and retry.');
       process.exit(1);
