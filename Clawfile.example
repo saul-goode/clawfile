@@ -1,5 +1,5 @@
 registry https://clawhub.com
-workdir ~/.openclaw/workspace
+workdir /Users/<you>/.openclaw/workspace
 
 weather
 apple-reminders

@@ -42,7 +42,7 @@ clawfile --help
 
 ```txt
 registry https://clawhub.com
-workdir /Users/you/.openclaw/workspace
+workdir /Users/<you>/.openclaw/workspace
 
 weather
 apple-reminders
