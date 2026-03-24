@@ -17,7 +17,7 @@ npm i -g clawfile
 
 ```txt
 registry https://clawhub.ai
-workdir ~/.openclaw/workspace
+workdir /Users/<you>/.openclaw/workspace
 
 weather
 apple-reminders
@@ -66,7 +66,7 @@ clawhub install <skill-slug> --version <version>
 
 ```txt
 registry https://clawhub.ai
-workdir ~/.openclaw/workspace
+workdir /Users/<you>/.openclaw/workspace
 
 weather
 telegram@1.0.0
@@ -102,6 +102,4 @@ clawfile update Clawfile
 
 ## Notes
 
-- `workdir` supports `~` only at the start (e.g. `~/.openclaw/workspace`)
-- unresolved `~` segments fail fast to prevent accidental nested installs
 - lockfile is written after non-dry runs
