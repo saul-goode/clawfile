@@ -8,8 +8,9 @@
   },
   "scripts": {
     "test": "node --test",
-    "lint": "node --check bin/clawfile.js",
-    "start": "node bin/clawfile.js --help"
+    "lint": "node --check bin/clawfile.js && node --check lib/core.js",
+    "start": "node bin/clawfile.js --help",
+    "release": "bash ./scripts/release.sh"
   },
   "keywords": [
     "openclaw",
