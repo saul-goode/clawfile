@@ -2,6 +2,7 @@
 import { existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { homedir } from 'node:os';
+import { join } from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 import { parseFile, loadLock, writeLock } from '../lib/core.js';
@@ -81,6 +82,11 @@ function runClawhub(args, env, dryRun) {
     return { status: 0, stdout: '' };
   }
   return spawnSync('clawhub', args, { stdio: 'inherit', env: { ...process.env, ...env } });
+}
+
+function resolveSkillsDir(env) {
+  const workdir = env.CLAWHUB_WORKDIR || process.cwd();
+  return join(workdir, 'skills');
 }
 
 function installedVersions(env) {
@@ -166,6 +172,15 @@ async function main() {
 
     const args = [cfg.mode, s.slug];
     if (targetVersion) args.push('--version', targetVersion);
+
+    if (cfg.mode === 'install') {
+      const skillPath = join(resolveSkillsDir(env), s.slug);
+      if (existsSync(skillPath)) {
+        console.log(`Skipping ${s.slug} (already present at ${skillPath})`);
+        skipped++;
+        continue;
+      }
+    }
 
     const res = runClawhub(args, env, cfg.dryRun);
     if (res.status !== 0) {
